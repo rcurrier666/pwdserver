@@ -64,9 +64,7 @@ Example Response:
 ]
 ```
 
-## GET
-
-## /groups/query[?name=\<nq\>][&gid=\<gq\>][&member=\<mq1\>[&member=\<mq2\>][&...]]
+## GET /groups/query[?name=\<nq\>][&gid=\<gq\>][&member=\<mq1\>[&member=\<mq2\>][&...]]
 
 Return a list of groups matching all of the specified query fields. The bracket notation indicates that any of the following query parameters may be supplied:
 
