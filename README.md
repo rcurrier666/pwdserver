@@ -5,6 +5,7 @@ The following methods are provided:
 ## GET /users
 
 Return a list of all users on the system, as defined in the /etc/passwd file.
+
 Example Response:
 ```
 [
@@ -25,7 +26,9 @@ following query parameters may be supplied:
 - shell
 
 Only exact matches are supported.
+
 Example Query: ​`GET /users/query?shell=%2Fbin%2Ffalse`
+
 Example Response:
 ```
 [
@@ -33,16 +36,18 @@ Example Response:
 “/home/dwoodlins”, “shell”: “/bin/false”}
 ]
 ```
-## GET /users/<<uid>>
+## GET /users/\<uid\>
 
-Return a single user with <uid>. Return 404 if <uid> is not found.
+Return a single user with \<uid\>. Returns 404 if \<uid\> is not found.
+
 Example Response:
 ```
 {“name”: “dwoodlins”, “uid”: 1001, “gid”: 1001, “comment”: “”, “home”:“/home/dwoodlins”, “shell”: “/bin/false”}
 ```
-## GET /users/<<uid>>/groups
+## GET /users/\<uid\>/groups
 
 Return all the groups for a given user.
+
 Example Response:
 ```[
 {“name”: “docker”, “gid”: 1002, “members”: [“dwoodlins”]}
@@ -51,6 +56,7 @@ Example Response:
 ## GET /groups
 
 Return a list of all groups on the system, a defined by /etc/group.
+
 Example Response:
 ```
 [
@@ -60,18 +66,18 @@ Example Response:
 
 ## GET
 
-## /groups/query[?name=<nq>][&gid=<gq>][&member=<mq1>[&member=<mq2>][&...]]
+## /groups/query[?name=\<nq\>][&gid=\<gq\>][&member=\<mq1\>[&member=\<mq2\>][&...]]
 
-Return a list of groups matching all of the specified query fields. The bracket notation indicates that any of the
-following query parameters may be supplied:
+Return a list of groups matching all of the specified query fields. The bracket notation indicates that any of the following query parameters may be supplied:
 
 - name
 - gid
 - member (repeated)
 
-Any group containing all the specified members should be returned, i.e. when query members are a subset of
-group members.
+Any group containing all the specified members should be returned, i.e. when query members are a subset of group members.
+
 Example Query: ​`GET /groups/query?member=_analyticsd&member=_networkd`
+
 Example Response:
 ```
 [
@@ -81,7 +87,8 @@ Example Response:
 
 ## GET /groups/\<gid\>
 
-Return a single group with <gid>. Return 404 if <gid> is not found.
+Return a single group with \<gid\>. Return 404 if \<gid\> is not found.
+
 Example Response:
 ```
 {“name”: “docker”, “gid”: 1002, “members”: [“dwoodlins”]}
