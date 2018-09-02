@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/github.com/rcurrier666#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "lodash": "^4.17.10",
+    "yargs": "^12.0.1"
   }
 }

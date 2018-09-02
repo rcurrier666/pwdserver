@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */ 
 /*jshint node: true */
 
+const _ = require ( 'lodash' );
 const fs = require ( 'fs' ),
       readline = require ( 'readline' ),
       keys = ["name", "x", "uid", "gid", "comment", "home", "shell"];
@@ -12,6 +13,16 @@ module.exports = {
   loadData: function (filename)
   {
     loading = false;
+    try
+    {
+      fs.accessSync ( filename );
+    }
+    catch ( err )
+    {
+      console.error(`${err}`)
+      return false;
+    }
+
     fs.watch ( filename, ( eventType, file ) => {
     //   console.log( ' event type is :', eventType);
     //   if (filename) {
@@ -33,6 +44,8 @@ module.exports = {
     });
 
     module.exports.loadDataEx ( filename );
+
+    return true;
   },
 
   loadDataEx: function (filename)
@@ -53,10 +66,13 @@ module.exports = {
         if (line) {
           module.exports.parseLine ( line );
         }
-        if (global.debug) console.log('Finished loading');
-        console.log('uid2pwdata :', uid2pwdata );
-        console.log('user2uid :', user2uid );
-        console.log('uid2pwdata[1001] :', uid2pwdata[user2uid.rcurrier]);
+        if (global.debug) 
+        {
+          console.log('Finished loading');
+          console.log('uid2pwdata :', uid2pwdata );
+          console.log('user2uid :', user2uid );
+          console.log('uid2pwdata[1001] :', uid2pwdata[user2uid.rcurrier]);
+        }
       });
   },
 
@@ -88,10 +104,15 @@ module.exports = {
 
   getUsers: function (query)
   {
-  console.log('query =', query);
-    for (var name in query)
+    for (var name in query)   // This just checks if query has any properties
     {
-      return "Query not supported";
+      // Convert any numeric strings to numbers
+      _.forEach ( query, (value, key) => {
+        if ( !isNaN ( value ) )
+          query[key] = Number ( value );
+      });
+      if (global.debug) console.log('HTTP query =', query);
+      return _.filter ( uid2pwdata, query );
     }
 
     // query is empty - return all users
@@ -110,9 +131,9 @@ module.exports = {
     return uid2pwdata.user2uid.user;
   },
 
-  getUid: function ( uid )
-  {
-    return uid2pwdata.uid;
-  }
+  // getUid: function ( uid )
+  // {
+  //   return uid2pwdata.uid;
+  // }
 
 };
