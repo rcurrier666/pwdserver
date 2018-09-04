@@ -65,6 +65,7 @@ if (!passwd.loadData( argv.passwdfile ) )//|| groups.loadData( argv.groupsFile
 // Routers
 //
 app.get('/users', usersHandler);
+app.get('/users/query', usersHandler);
 app.get('/users/:uid', usersHandler);
 
 // app.get('/user', (req, res) => {
@@ -81,7 +82,14 @@ app.listen(argv.port, () => {
 //
 function usersHandler ( req, res, next )
 {
+console.error(">>> req :", req);
+console.log(">>> path :", req.route.path);
 console.log("req.params :", req.params, !isNaN(req.params.uid));
+  if ( !req.route.path.includes("query") )
+  {
+    req.query = {};
+  }
+  
   if ( !isNaN(req.params.uid))
   {
     // uid was provided, overwrite query parameters
