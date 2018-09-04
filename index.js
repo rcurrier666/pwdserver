@@ -64,21 +64,45 @@ if (!passwd.loadData( argv.passwdfile ) )//|| groups.loadData( argv.groupsFile
 //
 // Routers
 //
-app.get('/users', (req, res) => {
-  if (global.jsonOutput)
-   res.send ( passwd.getUsers(req.query) );
- else
-   res.send ( "<pre>" + JSON.stringify(passwd.getUsers(req.query), null, 2 ) + "</pre>" );
-});
+app.get('/users', usersHandler);
+app.get('/users/:uid', usersHandler);
 
-app.get('/user', (req, res) => {
-  console.log( '>>>>> res :', res );
-  // res.send ( passwd.getUsers );
-});
+// app.get('/user', (req, res) => {
+//   console.log( '>>>>> res :', res );
+//   // res.send ( passwd.getUsers );
+// });
 
 app.listen(argv.port, () => {
   console.log(`App listening on port ${argv.port}`)
 });
+
+//
+// Route handlers
+//
+function usersHandler ( req, res, next )
+{
+console.log("req.params :", req.params, !isNaN(req.params.uid));
+  if ( !isNaN(req.params.uid))
+  {
+    // uid was provided, overwrite query parameters
+    //  and search just for uid
+    req.query = {uid: req.params.uid};
+  }
+console.log("req.query :", req.query);
+
+  result = passwd.getUsers(req.query);
+  if (result.length == 0 )
+  {
+    res.status(404).send('404 - Not found');
+  }
+  else
+  {
+    if (global.jsonOutput)
+      res.send ( result );
+    else
+      res.send ( "<pre>" + JSON.stringify(result, null, 2 ) + "</pre>" );
+  }
+}
 
 // function prettyJ(json) {
 //   if (typeof json !== 'string') {

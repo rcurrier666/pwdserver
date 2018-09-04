@@ -104,6 +104,7 @@ module.exports = {
 
   getUsers: function (query)
   {
+    if (global.debug) console.log ( `getUsers: query = ${query}`)
     for (var name in query)   // This just checks if query has any properties
     {
       // Convert any numeric strings to numbers
@@ -137,3 +138,8 @@ module.exports = {
   // }
 
 };
+
+// checkQuery: function (query)
+// {
+  
+// }
