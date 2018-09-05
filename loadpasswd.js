@@ -19,7 +19,7 @@ module.exports = {
     }
     catch ( err )
     {
-      console.error(`${err}`)
+      console.error(`${err}`);
       return false;
     }
 
@@ -54,7 +54,6 @@ module.exports = {
 
     uid2pwdata = {};  // Clear out old data
     user2uid = {};
-
     var instream = fs.createReadStream( filename ),
         outstream = new (require ( 'stream' ) ) ( ),
         rl = readline.createInterface ( instream, outstream );
@@ -68,10 +67,9 @@ module.exports = {
         }
         if (global.debug) 
         {
-          console.log('Finished loading');
+          console.log('Finished loading passwd file');
           console.log('uid2pwdata :', uid2pwdata );
           console.log('user2uid :', user2uid );
-          console.log('uid2pwdata[1001] :', uid2pwdata[user2uid.rcurrier]);
         }
       });
   },
@@ -104,7 +102,7 @@ module.exports = {
 
   getUsers: function (query)
   {
-    if (global.debug) console.log ( `getUsers: query = ${query}`)
+    if (global.debug) console.log ( `getUsers: query =`, query);
     for (var name in query)   // This just checks if query has any properties
     {
       // Convert any numeric strings to numbers
@@ -127,10 +125,10 @@ module.exports = {
     return result;
   },
 
-  getUser: function ( user )
-  {
-    return uid2pwdata.user2uid.user;
-  },
+  // getUser: function ( user )
+  // {
+  //   return uid2pwdata.user2uid.user;
+  // },
 
   // getUid: function ( uid )
   // {
@@ -141,5 +139,5 @@ module.exports = {
 
 // checkQuery: function (query)
 // {
-  
+
 // }

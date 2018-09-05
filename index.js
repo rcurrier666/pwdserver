@@ -4,7 +4,7 @@
 const express = require( 'express' );
 const app = express();
 const passwd = require( './loadpasswd.js' );
-//const groups = require( './loadgroups.js' );
+const group = require( './loadgroup.js' );
 
 //
 // Configure options
@@ -19,9 +19,9 @@ argv = require('yargs')
       type: 'boolean'
     },
     'g': {
-      alias: 'groupsfile',
-      default: '/etc/groups',
-      describe: 'file path to groups file',
+      alias: 'groupfile',
+      default: '/etc/group',
+      describe: 'file path to group file',
       nargs: 1,
       normalize: true,
       requiresArg: true,
@@ -58,8 +58,10 @@ global.jsonOutput = (argv.outputtype=="json");
 //
 // Initialize the caches
 //
-if (!passwd.loadData( argv.passwdfile ) )//|| groups.loadData( argv.groupsFile
-  return;
+if ( !passwd.loadData ( argv.passwdfile ) || !group.loadData ( argv.groupfile ) )
+{
+  process.exit(1);
+}
 
 //
 // Routers
@@ -67,6 +69,9 @@ if (!passwd.loadData( argv.passwdfile ) )//|| groups.loadData( argv.groupsFile
 app.get('/users', usersHandler);
 app.get('/users/query', usersHandler);
 app.get('/users/:uid', usersHandler);
+app.get('/groups', groupsHandler);
+app.get('/groups/query', groupsHandler);
+app.get('/groups/:gid', groupsHandler);
 
 // app.get('/user', (req, res) => {
 //   console.log( '>>>>> res :', res );
@@ -89,7 +94,7 @@ console.log("req.params :", req.params, !isNaN(req.params.uid));
   {
     req.query = {};
   }
-  
+
   if ( !isNaN(req.params.uid))
   {
     // uid was provided, overwrite query parameters
@@ -112,6 +117,38 @@ console.log("req.query :", req.query);
   }
 }
 
+function groupsHandler ( req, res, next )
+{
+// console.error(">>> req :", req);
+console.log(">>> path :", req.route.path);
+console.log("req.params :", req.params, !isNaN(req.params.gid));
+  if ( !req.route.path.includes("query") )
+  {
+    req.query = {};
+  }
+
+  if ( !isNaN(req.params.gid))
+  {
+    // uid was provided, overwrite query parameters
+    //  and search just for uid
+    req.query = {gid: req.params.gid};
+  }
+console.log("req.query :", req.query);
+
+  result = group.getUsers(req.query);
+  if (result.length == 0 )
+  {
+    res.status(404).send('404 - Not found');
+  }
+  else
+  {
+    if (global.jsonOutput)
+      res.send ( result );
+    else
+      res.send ( "<pre>" + JSON.stringify(result, null, 2 ) + "</pre>" );
+  }
+ 
+}
 // function prettyJ(json) {
 //   if (typeof json !== 'string') {
 //     json = JSON.stringify(json, undefined, 2);
