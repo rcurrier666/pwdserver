@@ -92,3 +92,28 @@ Example Response:
 {“name”: “docker”, “gid”: 1002, “members”: [“dwoodlins”]}
 ```
 
+# Installation
+
+Make sure you have a recent version of Node.js, one that supports ES6. It's been tested on both V8 and V6 releases. It's also been tested on CentOS Linux and Windows.
+
+- Clone the repository
+- cd into passwdsrv directory
+- Do `npm install` to install the dependencies.
+- Run `node index.js` to use the default options (see below)
+
+# Options
+
+  --help            Show help                                         [boolean]
+  --version         Show version number                               [boolean]
+  -d, --debug       output excessive internal details to console
+                                                                      [boolean]
+                                                               [default: false]
+  -g, --groupfile   file path to group file                            [string]
+                                                     [default: "/etc/group"]
+  -o, --outputtype  Format for output                                  [string]
+                                                      [choices: "json", "text"]
+                                                              [default: "text"]
+  -p, --passwdfile  file path to passwd file                           [string]
+                                                       [default: "/etc/passwd"]
+  --port            port to listen on                                  [number]
+                                                                [default: 3000]
