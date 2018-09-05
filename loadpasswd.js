@@ -130,10 +130,10 @@ module.exports = {
   //   return uid2pwdata.user2uid.user;
   // },
 
-  // getUid: function ( uid )
-  // {
-  //   return uid2pwdata.uid;
-  // }
+  getUserByUID: function ( uid )
+  {
+    return uid2pwdata[uid];
+  }
 
 };
 

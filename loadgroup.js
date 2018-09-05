@@ -19,7 +19,6 @@ module.exports = {
     catch ( err )
     {
       console.error(`${err}`);
-      debugger;
       return false;
     }
 

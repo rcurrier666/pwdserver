@@ -69,6 +69,7 @@ if ( !passwd.loadData ( argv.passwdfile ) || !group.loadData ( argv.groupfile ) 
 app.get('/users', usersHandler);
 app.get('/users/query', usersHandler);
 app.get('/users/:uid', usersHandler);
+app.get('/users/:uid/groups', usersGroupsHandler);
 app.get('/groups', groupsHandler);
 app.get('/groups/query', groupsHandler);
 app.get('/groups/:gid', groupsHandler);
@@ -87,21 +88,21 @@ app.listen(argv.port, () => {
 //
 function usersHandler ( req, res, next )
 {
-console.error(">>> req :", req);
-console.log(">>> path :", req.route.path);
-console.log("req.params :", req.params, !isNaN(req.params.uid));
+// console.error(">>> req :", req);
+// console.log(">>> path :", req.route.path);
+// console.log("req.params :", req.params, !isNaN(req.params.uid));
   if ( !req.route.path.includes("query") )
   {
     req.query = {};
   }
 
-  if ( !isNaN(req.params.uid))
+  if ( !isNaN(req.params.uid) )
   {
     // uid was provided, overwrite query parameters
     //  and search just for uid
     req.query = {uid: req.params.uid};
   }
-console.log("req.query :", req.query);
+// console.log("req.query :", req.query);
 
   result = passwd.getUsers(req.query);
   if (result.length == 0 )
@@ -117,11 +118,34 @@ console.log("req.query :", req.query);
   }
 }
 
+function usersGroupsHandler ( req, res, next )
+{
+  user = passwd.getUserByUID(req.params.uid);
+  if (!user)
+  {
+console.error(`uid ${req.params.uid} not found`);
+    res.status(404).send('404 - User not found');
+  }
+  else
+  {
+console.log('uid:', req.params.uid);
+console.log('name:', user.name);
+    query = { member: user.name};
+    result = group.getUsers(query);
+console.log('groups:', result);
+
+    if (global.jsonOutput)
+      res.send ( result );
+    else
+      res.send ( "<pre>" + JSON.stringify(result, null, 2 ) + "</pre>" );
+  }
+}
+
 function groupsHandler ( req, res, next )
 {
 // console.error(">>> req :", req);
-console.log(">>> path :", req.route.path);
-console.log("req.params :", req.params, !isNaN(req.params.gid));
+// console.log(">>> path :", req.route.path);
+// console.log("req.params :", req.params, !isNaN(req.params.gid));
   if ( !req.route.path.includes("query") )
   {
     req.query = {};
@@ -133,7 +157,7 @@ console.log("req.params :", req.params, !isNaN(req.params.gid));
     //  and search just for uid
     req.query = {gid: req.params.gid};
   }
-console.log("req.query :", req.query);
+// console.log("req.query :", req.query);
 
   result = group.getUsers(req.query);
   if (result.length == 0 )
