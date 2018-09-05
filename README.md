@@ -1,5 +1,7 @@
 # Passwd as a Service
 
+This HTTP server exposes the user and group information on a UNIX-like system that is usually locked away in the UNIX /etc/passwd and /etc/groups files. While obviously a toy, it should be deployed with caution as it exposes potentially useful information to persons with ill-intent.
+
 The following methods are provided:
 
 ## GET /users
@@ -103,17 +105,20 @@ Make sure you have a recent version of Node.js, one that supports ES6. It's been
 
 # Options
 
+```
   --help            Show help                                         [boolean]
   --version         Show version number                               [boolean]
-  -d, --debug       output excessive internal details to console
-                                                                      [boolean]
+  -d, --debug       Output excessive internal details to console      [boolean]
                                                                [default: false]
-  -g, --groupfile   file path to group file                            [string]
-                                                     [default: "/etc/group"]
-  -o, --outputtype  Format for output                                  [string]
+  -g, --groupfile   File path to group file                            [string]
+                                                        [default: "/etc/group"]
+  -n, --nowarn      Suppress system file usage warning                [boolean]
+                                                               [default: false]
+  -o, --outputtype  Format to use for output                           [string]
                                                       [choices: "json", "text"]
                                                               [default: "text"]
-  -p, --passwdfile  file path to passwd file                           [string]
+  -p, --passwdfile  File path to passwd file                           [string]
                                                        [default: "/etc/passwd"]
-  --port            port to listen on                                  [number]
+  --port            Port to listen on                                  [number]
                                                                 [default: 3000]
+```

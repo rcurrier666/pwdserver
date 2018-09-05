@@ -1,0 +1,11 @@
+root:x:0:
+daemon:x:1:
+bin:x:2:
+sys:x:3:syslog
+adm:x:4:syslog,osboxes
+sudo:x:27:osboxes,rcurrier
+operator:x:37:rcurrier
+plugdev:x:46:osboxes
+lpadmin:x:115:osboxes
+rcurrier:x:1001:rcurrier
+testuser:x:1002:testuser

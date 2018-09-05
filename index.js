@@ -15,20 +15,27 @@ argv = require('yargs')
     'd': {
       alias: 'debug',
       default: false,
-      describe: 'output excessive internal details to console',
+      describe: 'Output excessive internal details to console',
       type: 'boolean'
     },
     'g': {
       alias: 'groupfile',
       default: '/etc/group',
-      describe: 'file path to group file',
+      describe: 'File path to group file',
       nargs: 1,
       normalize: true,
       requiresArg: true,
       type: 'string'
     },
+    'n': {
+      alias: 'nowarn',
+      default: false,
+      describe: 'Suppress the /etc/passwd and /etc/group usage warning',
+      type: 'boolean'
+    },
     'o': {
       alias: 'outputtype',
+      describe: 'Format to use for output',
       default: 'text',
       choices: ['json', 'text'],
       nargs: 1,
@@ -38,7 +45,7 @@ argv = require('yargs')
     'p': {
       alias: 'passwdfile',
       default: '/etc/passwd',
-      describe: 'file path to passwd file',
+      describe: 'File path to passwd file',
       nargs: 1,
       normalize: true,
       requiresArg: true,
@@ -46,7 +53,7 @@ argv = require('yargs')
     },
     'port': {
       default: 3000,
-      describe: 'port to listen on',
+      describe: 'Port to listen on',
       type: 'number'
     }
   })
@@ -54,6 +61,20 @@ argv = require('yargs')
 
 global.debug = argv.debug;
 global.jsonOutput = (argv.outputtype=="json");
+
+if (!argv.nowarn && (argv.passwdfile == '/etc/passwd' || argv.groupfile == '/etc/group'))
+{
+  console.warn(
+    '  +=======================================================+\n' +
+    '  |                     WARNING                           |\n' +
+    '  | You are using the system passwd and group files.      |\n' +
+    '  | Use with care as this potentially exposes system      |\n' +
+    '  | level information to less than reputable individuals. |\n' +
+    '  | This warning can be suppressed by using the --nowarn  |\n' +
+    '  | flag when starting.                                   |\n' +
+    '  +=======================================================+\n'
+    );
+}
 
 //
 // Initialize the caches
