@@ -57,7 +57,6 @@ argv = require ( 'yargs' )
     },
     'p': {
       alias: 'passwdfile',
-      // default: 'testfiles/passwd',
       default: '/etc/passwd',
       describe: 'File path to passwd file',
       nargs: 1,
