@@ -122,3 +122,7 @@ Make sure you have a recent version of Node.js, one that supports ES6. It's been
   --port            Port to listen on                                  [number]
                                                                 [default: 3000]
 ```
+
+# Tests
+
+To run the test suite start a server with `-p testfiles/passwd -g testfiles/group -o json`. In another window run `npm test`. This will test all functions with both success and failure arguments.

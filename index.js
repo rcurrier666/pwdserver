@@ -20,6 +20,7 @@ argv = require('yargs')
     },
     'g': {
       alias: 'groupfile',
+      // default: 'testfiles/group',
       default: '/etc/group',
       describe: 'File path to group file',
       nargs: 1,
@@ -36,14 +37,16 @@ argv = require('yargs')
     'o': {
       alias: 'outputtype',
       describe: 'Format to use for output',
-      default: 'text',
-      choices: ['json', 'text'],
+      default: 'json',
+      // default: 'text',
       nargs: 1,
       requiresArg: true,
-      type: 'string'
+      type: 'string',
+      choices: ['json', 'text'],
     },
     'p': {
       alias: 'passwdfile',
+      // default: 'testfiles/passwd',
       default: '/etc/passwd',
       describe: 'File path to passwd file',
       nargs: 1,
@@ -58,6 +61,14 @@ argv = require('yargs')
     }
   })
   .argv;
+
+//////////////////
+// console.log(argv);
+argv.outputtype = argv.o = "json";
+argv.passwdfile = argv.p = "testfiles/passwd";
+argv.groupfile = argv.g = "testfiles/group";
+// console.log(argv);
+//////////////////
 
 global.debug = argv.debug;
 global.jsonOutput = (argv.outputtype=="json");
@@ -75,7 +86,6 @@ if (!argv.nowarn && (argv.passwdfile == '/etc/passwd' || argv.groupfile == '/etc
     '  +=======================================================+\n'
     );
 }
-
 //
 // Initialize the caches
 //
@@ -94,11 +104,6 @@ app.get('/users/:uid/groups', usersGroupsHandler);
 app.get('/groups', groupsHandler);
 app.get('/groups/query', groupsHandler);
 app.get('/groups/:gid', groupsHandler);
-
-// app.get('/user', (req, res) => {
-//   console.log( '>>>>> res :', res );
-//   // res.send ( passwd.getUsers );
-// });
 
 app.listen(argv.port, () => {
   console.log(`App listening on port ${argv.port}`)
@@ -132,6 +137,7 @@ function usersHandler ( req, res, next )
   }
   else
   {
+console.log('jsonOutput:', global.jsonOutput);
     if (global.jsonOutput)
       res.send ( result );
     else

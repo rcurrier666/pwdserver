@@ -4,7 +4,7 @@
   "description": "A toy server to get passwd and groups file entries",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,12 @@
   },
   "homepage": "https://github.com/github.com/rcurrier666#readme",
   "dependencies": {
+    "chai": "^4.1.2",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
-    "yargs": "^12.0.1"
+    "mocha": "^5.2.0",
+    "request": "^2.88.0",
+    "supertest": "^3.2.0",
+    "yargs": "^12.0.2"
   }
 }
