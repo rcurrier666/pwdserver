@@ -126,3 +126,5 @@ Make sure you have a recent version of Node.js, one that supports ES6. It's been
 # Tests
 
 To run the test suite start a server with `-p testfiles/passwd -g testfiles/group -o json`. In another window run `npm test`. This will test all functions with both success and failure arguments.
+
+I npm is aborting, you may have to run it as `sudo npm test`.

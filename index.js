@@ -1,17 +1,30 @@
+///////////////////////////////////////////////////////////////////////
+//
+// index.js
+//
+// Entry point for pwdserver
+//
+// Date: 6 Sep 2018
+// Author: Ron Currier
+// Copyright 2018 by Sparkfish Heavy Industries
+// License: MIT
+// 
+///////////////////////////////////////////////////////////////////////
+
 /*jshint esversion: 6 */ 
 /*jshint node: true */
 
-const express = require( 'express' );
+const express = require ( 'express' );
 const app = express();
-const passwd = require( './loadpasswd.js' );
-const group = require( './loadgroup.js' );
+const passwd = require ( './loadpasswd.js' );
+const group = require ( './loadgroup.js' );
 
 //
 // Configure options
 //
-argv = require('yargs')
-.usage('$0 [options]')
-  .options({
+argv = require ( 'yargs' )
+.usage ( '$0 [options]' )
+  .options ( {
     'd': {
       alias: 'debug',
       default: false,
@@ -20,7 +33,6 @@ argv = require('yargs')
     },
     'g': {
       alias: 'groupfile',
-      // default: 'testfiles/group',
       default: '/etc/group',
       describe: 'File path to group file',
       nargs: 1,
@@ -37,8 +49,7 @@ argv = require('yargs')
     'o': {
       alias: 'outputtype',
       describe: 'Format to use for output',
-      default: 'json',
-      // default: 'text',
+      default: 'text',
       nargs: 1,
       requiresArg: true,
       type: 'string',
@@ -59,23 +70,15 @@ argv = require('yargs')
       describe: 'Port to listen on',
       type: 'number'
     }
-  })
+  } )
   .argv;
 
-//////////////////
-// console.log(argv);
-argv.outputtype = argv.o = "json";
-argv.passwdfile = argv.p = "testfiles/passwd";
-argv.groupfile = argv.g = "testfiles/group";
-// console.log(argv);
-//////////////////
-
 global.debug = argv.debug;
-global.jsonOutput = (argv.outputtype=="json");
+global.jsonOutput = ( argv.outputtype=="json" );
 
-if (!argv.nowarn && (argv.passwdfile == '/etc/passwd' || argv.groupfile == '/etc/group'))
+if ( !argv.nowarn && ( argv.passwdfile == '/etc/passwd' || argv.groupfile == '/etc/group' ) )
 {
-  console.warn(
+  console.warn (
     '  +=======================================================+\n' +
     '  |                     WARNING                           |\n' +
     '  | You are using the system passwd and group files.      |\n' +
@@ -86,59 +89,55 @@ if (!argv.nowarn && (argv.passwdfile == '/etc/passwd' || argv.groupfile == '/etc
     '  +=======================================================+\n'
     );
 }
+
 //
 // Initialize the caches
 //
 if ( !passwd.loadData ( argv.passwdfile ) || !group.loadData ( argv.groupfile ) )
 {
-  process.exit(1);
+  process.exit ( 1 );
 }
 
 //
 // Routers
 //
-app.get('/users', usersHandler);
-app.get('/users/query', usersHandler);
-app.get('/users/:uid', usersHandler);
-app.get('/users/:uid/groups', usersGroupsHandler);
-app.get('/groups', groupsHandler);
-app.get('/groups/query', groupsHandler);
-app.get('/groups/:gid', groupsHandler);
+app.get ( '/users', usersHandler );
+app.get ( '/users/query', usersHandler );
+app.get ( '/users/:uid', usersHandler );
+app.get ( '/users/:uid/groups', usersGroupsHandler );
+app.get ( '/groups', groupsHandler );
+app.get ( '/groups/query', groupsHandler );
+app.get ( '/groups/:gid', groupsHandler );
 
-app.listen(argv.port, () => {
-  console.log(`App listening on port ${argv.port}`)
-});
+app.listen ( argv.port, ( ) => {
+  console.log ( `Listening on port ${argv.port}` );
+} );
 
 //
 // Route handlers
 //
 function usersHandler ( req, res, next )
 {
-// console.error(">>> req :", req);
-// console.log(">>> path :", req.route.path);
-// console.log("req.params :", req.params, !isNaN(req.params.uid));
-  if ( !req.route.path.includes("query") )
+  if ( !req.route.path.includes ( "query" ) )
   {
-    req.query = {};
+    req.query = { };
   }
 
-  if ( !isNaN(req.params.uid) )
+  if ( !isNaN ( req.params.uid ) )
   {
     // uid was provided, overwrite query parameters
     //  and search just for uid
-    req.query = {uid: req.params.uid};
+    req.query = { uid: req.params.uid };
   }
-// console.log("req.query :", req.query);
 
-  result = passwd.getUsers(req.query);
-  if (result.length == 0 )
+  result = passwd.getUsers ( req.query );
+  if ( result.length == 0 )
   {
-    res.status(404).send('404 - Not found');
+    res.status ( 404 ).send ( '404 - Not found' );
   }
   else
   {
-console.log('jsonOutput:', global.jsonOutput);
-    if (global.jsonOutput)
+    if ( global.jsonOutput )
       res.send ( result );
     else
       res.send ( "<pre>" + JSON.stringify(result, null, 2 ) + "</pre>" );
@@ -147,78 +146,48 @@ console.log('jsonOutput:', global.jsonOutput);
 
 function usersGroupsHandler ( req, res, next )
 {
-  user = passwd.getUserByUID(req.params.uid);
-  if (!user)
+  user = passwd.getUserByUID ( req.params.uid );
+  if ( !user )
   {
-console.error(`uid ${req.params.uid} not found`);
-    res.status(404).send('404 - User not found');
+    res.status ( 404 ).send ( '404 - User not found' );
   }
   else
   {
-console.log('uid:', req.params.uid);
-console.log('name:', user.name);
-    query = { member: user.name};
-    result = group.getUsers(query);
-console.log('groups:', result);
+    query = { member: user.name };
+    result = group.getGroups ( query );
 
-    if (global.jsonOutput)
+    if ( global.jsonOutput )
       res.send ( result );
     else
-      res.send ( "<pre>" + JSON.stringify(result, null, 2 ) + "</pre>" );
+      res.send ( "<pre>" + JSON.stringify ( result, null, 2 ) + "</pre>" );
   }
 }
 
 function groupsHandler ( req, res, next )
 {
-// console.error(">>> req :", req);
-// console.log(">>> path :", req.route.path);
-// console.log("req.params :", req.params, !isNaN(req.params.gid));
-  if ( !req.route.path.includes("query") )
+  if ( !req.route.path.includes ( "query" ) )
   {
-    req.query = {};
+    req.query = { };
   }
 
-  if ( !isNaN(req.params.gid))
+  if ( !isNaN ( req.params.gid ) )
   {
-    // uid was provided, overwrite query parameters
-    //  and search just for uid
-    req.query = {gid: req.params.gid};
+    // gid was provided, overwrite query parameters
+    //  and search just for gid
+    req.query = { gid: req.params.gid };
   }
-// console.log("req.query :", req.query);
 
-  result = group.getUsers(req.query);
-  if (result.length == 0 )
+  result = group.getGroups ( req.query );
+  if ( result.length == 0 )
   {
-    res.status(404).send('404 - Not found');
+    res.status ( 404 ).send ( '404 - Not found' );
   }
   else
   {
-    if (global.jsonOutput)
+    if ( global.jsonOutput )
       res.send ( result );
     else
       res.send ( "<pre>" + JSON.stringify(result, null, 2 ) + "</pre>" );
   }
  
 }
-// function prettyJ(json) {
-//   if (typeof json !== 'string') {
-//     json = JSON.stringify(json, undefined, 2);
-//   }
-//   return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, 
-//     function (match) {
-//       let cls = "\x1b[36m";
-//       if (/^"/.test(match)) {
-//         if (/:$/.test(match)) {
-//           cls = "\x1b[34m";
-//         } else {
-//           cls = "\x1b[32m";
-//         }
-//       } else if (/true|false/.test(match)) {
-//         cls = "\x1b[35m"; 
-//       } else if (/null/.test(match)) {
-//         cls = "\x1b[31m";
-//       }
-//       return cls + match + "\x1b[0m";
-//     }
-//   );
-// }
